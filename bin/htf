@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+const Htf = require('../index');
+const cli = new Htf(process.argv.slice(2));
+cli.run();

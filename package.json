@@ -1,0 +1,43 @@
+{
+  "name": "hadra-server",
+  "version": "0.1.0",
+  "description": "",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sinedied/hadra-server.git"
+  },
+  "main": "index.js",
+  "bin": {
+    "htf": "./bin/htf"
+  },
+  "scripts": {
+    "lint": "eslint *.js",
+    "test": "npm run lint",
+    "postpublish": "git tag -a $npm_package_version -m '$npm_package_version' && git push --tags"
+  },
+  "keywords": [
+    "hadra",
+    "data"
+  ],
+  "author": "Yohan Lasorsa",
+  "license": "MIT",
+  "homepage": "https://github.com/sinedied/hadra-server",
+  "bugs": {
+    "url": "https://github.com/sinedied/hadra-server/issues"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "fbgraph": "^1.4.1",
+    "fs-extra": "^4.0.1",
+    "iconv-lite": "^0.4.18",
+    "lodash": "^4.17.4",
+    "minimist": "^1.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.4.1"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}
