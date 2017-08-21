@@ -9,7 +9,10 @@ const popsicle = require('popsicle')
 const entities = new require('html-entities').AllHtmlEntities;
 const franc = require('franc');
 const _ = require('lodash');
+
 const pkg = require('./package.json');
+const findCountryCode = require('./lib/country');
+const preprocess = require('./lib/preprocess');
 
 const artistPicturesBaseUrl = 'http://www.hadra.net/HTF2017/ph_artists/';
 const artistImagesFolder = 'artists';
@@ -50,10 +53,22 @@ class Htf {
     } else if (this._args.version) {
       this._exit(pkg.version, 0);
     } else if (this._args._.length === 1) {
-      this._process(this._args._[0], this._args);
+      if (this._args.preprocess) {
+        this._preprocess(this._args._[0])
+      } else {
+        this._process(this._args._[0], this._args);
+      }
     } else {
       this._exit(help);
     }
+  }
+
+  _preprocess(file) {
+    file = path.resolve(file);
+    const json = require(file);
+    const cleanedJson = preprocess(json);
+    fs.writeFileSync(file, JSON.stringify(cleanedJson, null, 2));
+    console.log('Data preprocess successfull');
   }
 
   _process(file, options) {
@@ -112,7 +127,8 @@ class Htf {
         artist.bio = {};
         artist.bio[lang === 'eng' ? 'en' : 'fr'] = a.bio;
       }
-      artist.country = a.nationality;
+      artist.country = findCountryCode(a.nationality);
+      // artist.originalCountry = a.nationality;
       artist.label = a.label;
       artist.website = cleanUrl(a.website);
       artist.mixcloud = cleanUrl(fixUrl(a.mixcloud, 'mixcloud.com'));

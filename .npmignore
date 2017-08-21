@@ -1,7 +1,0 @@
-dist/
-data/
-test/
-.eslintrc.json
-.gitignore
-.idea
-.DS_Store
