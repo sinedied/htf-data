@@ -4,17 +4,15 @@ const minimist = require('minimist');
 const chalk = require('chalk');
 const path = require('path');
 const fs = require('fs-extra');
-const iconvlite = require('iconv-lite');
-const popsicle = require('popsicle')
-const entities = new require('html-entities').AllHtmlEntities;
 const franc = require('franc');
 const _ = require('lodash');
 
 const pkg = require('./package.json');
 const findCountryCode = require('./lib/country');
 const preprocess = require('./lib/preprocess');
+const Fix = require('./lib/fix');
+const Image = require('./lib/image');
 
-const artistPicturesBaseUrl = 'http://www.hadra.net/HTF2017/ph_artists/';
 const artistImagesFolder = 'artists';
 const imagesPrefix = 'images/artists/';
 
@@ -24,6 +22,7 @@ Process Hadra Trance Festival database export into valid data for the app.
 
 ${chalk.bold('Options:')}
   -p, --preprocess         Preprocess database extract (removes extra data)
+  -s, --skip-images        Do not attempt to download photos/banners
   -o, --out <folder>       Data output folder [default: dist]
   -f, --fixes <file.json>  Data fixes         [default: fixes.json]
 `;
@@ -31,14 +30,15 @@ ${chalk.bold('Options:')}
 class Htf {
   constructor(args) {
     this._args = minimist(args, {
-      boolean: ['help', 'version', 'verbose', 'preprocess'],
+      boolean: ['help', 'version', 'verbose', 'preprocess', 'skip-images'],
       string: ['out', 'fixes'],
       alias: {
         v: 'verbose',
         h: 'help',
         o: 'out',
         f: 'fixes',
-        p: 'preprocess'
+        p: 'preprocess',
+        s: 'skip-images'
       },
       default: {
         out: 'dist',
@@ -111,17 +111,17 @@ class Htf {
 
     json.forEach(a => {
       let artist = {};
-      let buffer, filename, promise;
+      let promise;
 
       // Fix encoding
-      a.name = fixUnicode(a.name);
-      a.bio = fixUnicode(a.bio);
-      a.nationality = fixUnicode(a.nationality);
-      a.label = fixUnicode(a.label);
+      a.name = Fix.text(a.name);
+      a.bio = Fix.text(a.bio);
+      a.nationality = Fix.text(a.nationality);
+      a.label = Fix.text(a.label);
 
       // Cleanup
       artist.id = '' + a.id;
-      artist.name = fixName(a.name).trim();
+      artist.name = Fix.name(a.name);
       if (a.bio) {
         const lang = franc(a.bio);
         artist.bio = {};
@@ -130,27 +130,20 @@ class Htf {
       artist.country = findCountryCode(a.nationality);
       // artist.originalCountry = a.nationality;
       artist.label = a.label;
-      artist.website = cleanUrl(a.website);
-      artist.mixcloud = cleanUrl(fixUrl(a.mixcloud, 'mixcloud.com'));
-      artist.soundcloud = cleanUrl(fixUrl(a.soundcloud, 'soundcloud.com'));
-      artist.facebook = cleanUrl(fixUrl(a.facebook, 'facebook.com'));
+      artist.website = Fix.url(a.website);
+      artist.mixcloud = Fix.url(a.mixcloud, 'mixcloud.com');
+      artist.soundcloud = Fix.url(a.soundcloud, 'soundcloud.com');
+      artist.facebook = Fix.url(a.facebook, 'facebook.com');
 
       if (a.photo) {
-        // let photoName = `photo-${artist.id}${path.extname(a.photo)}`;
-        // const promise = getImage(artistPicturesBaseUrl + a.photo, path.join(imagesFolder, photoName))
-        //   .catch(() => {
-        //     // Retry with .jpg extension
-        //     photoName = `photo-${artist.id}.jpg`;
-        //     return getImage(artistPicturesBaseUrl + a.photo.replace('.jpeg', '.jpg'), path.join(imagesFolder, photoName));
-        //   })
-        //   .then(() => {
-        //     numPhotos++;
-        //     artist.photo = imagesPrefix + photoName;
-        //   })
-        //   .catch(err => {
-        //     console.error(err);
-        //   });
-        // promises.push(promise);
+        if (!options['skip-images']) {
+          promise = Image.getPhoto(artist, a.photo, imagesFolder)
+            .then(photoName => {
+              numPhotos++;
+              artist.photo = imagesPrefix + photoName;
+            });
+          promises.push(promise);
+        }
         // buffer = new Buffer(artist.photo, 'base64');
         // filename = 'photo-' + artist.id + '.jpg';
         // fs.writeFileSync(path.join(imagesFolder, filename), buffer);
@@ -284,7 +277,6 @@ class Htf {
       });
     });
 
-
     var newJson = {lineup: scenes, artists: artists};
 
     Promise.all(promises).then(function() {
@@ -311,65 +303,6 @@ module.exports = Htf;
 // Internal
 // ------------------------------------
 
-function fixUrl(url, site) {
-  if (!url) {
-    return null;
-  }
-
-  if (url.indexOf(site) === -1) {
-    return site + '/' + url;
-  }
-
-  return url;
-}
-
-function cleanUrl(url) {
-  if (!url) {
-    return null;
-  }
-
-  if (url.indexOf('http:') === 0) {
-    url = url.replace('http:', 'https:')
-  } else if (url.indexOf('http') !== 0) {
-    url = 'https://' + url;
-  }
-
-  url = url
-    .replace('?fref=ts', '')
-    .replace('//facebook.com', '//www.facebook.com')
-    .replace('//mixcloud.com', '//www.mixcloud.com')
-    .replace('m.facebook.com', 'www.facebook.com')
-    .replace('m.soundcloud.com', 'soundcloud.com')
-
-  return url;
-}
-
-function fixUnicode(str) {
-  if (!str) {
-    return;
-  }
-
-  // Fix bad DB encoding (utf8 encoded as latin1)
-  str = iconvlite.encode(str, 'windows-1252');
-  str = iconvlite.decode(str, 'utf8');
-
-  str = str
-    .replace(/\r\n/g, '<br>')
-    .replace(/\t/g, '');
-    // .replace(/&amp;/g, '&')
-    // .replace(/&quot;/g, '"')
-    // .replace(/�\?\?/g, '\'')
-    // .replace(/��"/g, '\'');
-
-  str = entities.decode(str);
-  return str;
-}
-
-function fixName(name) {
-  return capitalize(name.toLowerCase())
-    .replace('Dj', 'DJ');
-}
-
 function applyArtistFix(artist, fixes) {
   var fix = _.find(fixes.artists, {id: artist.id});
   if (fix) {
@@ -388,22 +321,3 @@ function applyLineupFix(lineup, fixes) {
   return lineup;
 }
 
-function capitalize(str) {
-  return str.replace(/\b\w/g, function (l) {
-    return l.toUpperCase();
-  });
-}
-
-function getImage(url, filename) {
-  return popsicle.get({
-      url,
-      transport: popsicle.createTransport({type: 'buffer'})
-    })
-    .then(response => {
-      if (response.status >= 200 && response.status < 400 && response.url.indexOf('/404.htm') === -1) {
-        return fs.writeFile(filename, response.body);
-      } else {
-        throw new Error(`Image not found: ${url}`);
-      }
-    });
-}
