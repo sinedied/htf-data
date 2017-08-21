@@ -5,14 +5,22 @@ const chalk = require('chalk');
 const path = require('path');
 const fs = require('fs-extra');
 const iconvlite = require('iconv-lite');
+const popsicle = require('popsicle')
+const entities = new require('html-entities').AllHtmlEntities;
+const franc = require('franc');
 const _ = require('lodash');
 const pkg = require('./package.json');
 
+const artistPicturesBaseUrl = 'http://www.hadra.net/HTF2017/ph_artists/';
+const artistImagesFolder = 'artists';
+const imagesPrefix = 'images/artists/';
+
 const help =
 `${chalk.bold('Usage:')} htf <db_export.json> [options]
-Process HTF database export into valid data for the HTF app.
+Process Hadra Trance Festival database export into valid data for the app.
 
 ${chalk.bold('Options:')}
+  -p, --preprocess         Preprocess database extract (removes extra data)
   -o, --out <folder>       Data output folder [default: dist]
   -f, --fixes <file.json>  Data fixes         [default: fixes.json]
 `;
@@ -20,13 +28,14 @@ ${chalk.bold('Options:')}
 class Htf {
   constructor(args) {
     this._args = minimist(args, {
-      boolean: ['help', 'version'],
+      boolean: ['help', 'version', 'verbose', 'preprocess'],
       string: ['out', 'fixes'],
       alias: {
-        v: 'version',
+        v: 'verbose',
         h: 'help',
         o: 'out',
-        f: 'fixes'
+        f: 'fixes',
+        p: 'preprocess'
       },
       default: {
         out: 'dist',
@@ -49,12 +58,11 @@ class Htf {
 
   _process(file, options) {
     file = path.resolve(file);
-    out = path.resolve(options.out);
-    fixesFile = path.resolve(options.fixes);
-    fs.ensureDirSync(out);
+    const out = path.resolve(options.out);
+    const fixesFile = path.resolve(options.fixes);
+    const imagesFolder = path.join(out, artistImagesFolder);
+    fs.ensureDirSync(imagesFolder);
 
-    const imagesFolder = path.join(out, 'artists');
-    const imagesPrefix = 'images/artists/';
     const scenes = [
       {
         name: "Main",
@@ -65,12 +73,17 @@ class Htf {
         name: "Alternative",
         hide: false,
         sets: []
+      },
+      {
+        name: "Chillout",
+        hide: false,
+        sets: []
       }
     ];
-    const artists = [];
+    let artists = [];
     const json = require(file);
     let fixes = {};
-    if (!fs.existsSync(fixesFile)) {
+    if (fs.existsSync(fixesFile)) {
       fixes = require(fixesFile);
     }
 
@@ -82,21 +95,46 @@ class Htf {
     console.log(`Loaded ${json.length} artists`);
 
     json.forEach(a => {
-      const artist = {};
+      let artist = {};
       let buffer, filename, promise;
+
+      // Fix encoding
+      a.name = fixUnicode(a.name);
+      a.bio = fixUnicode(a.bio);
+      a.nationality = fixUnicode(a.nationality);
+      a.label = fixUnicode(a.label);
 
       // Cleanup
       artist.id = '' + a.id;
       artist.name = fixName(a.name).trim();
+      if (a.bio) {
+        const lang = franc(a.bio);
+        artist.bio = {};
+        artist.bio[lang === 'eng' ? 'en' : 'fr'] = a.bio;
+      }
       artist.country = a.nationality;
       artist.label = a.label;
-      artist.bio = {fr: fixBio(a.bio)};
       artist.website = cleanUrl(a.website);
       artist.mixcloud = cleanUrl(fixUrl(a.mixcloud, 'mixcloud.com'));
       artist.soundcloud = cleanUrl(fixUrl(a.soundcloud, 'soundcloud.com'));
       artist.facebook = cleanUrl(fixUrl(a.facebook, 'facebook.com'));
 
       if (a.photo) {
+        // let photoName = `photo-${artist.id}${path.extname(a.photo)}`;
+        // const promise = getImage(artistPicturesBaseUrl + a.photo, path.join(imagesFolder, photoName))
+        //   .catch(() => {
+        //     // Retry with .jpg extension
+        //     photoName = `photo-${artist.id}.jpg`;
+        //     return getImage(artistPicturesBaseUrl + a.photo.replace('.jpeg', '.jpg'), path.join(imagesFolder, photoName));
+        //   })
+        //   .then(() => {
+        //     numPhotos++;
+        //     artist.photo = imagesPrefix + photoName;
+        //   })
+        //   .catch(err => {
+        //     console.error(err);
+        //   });
+        // promises.push(promise);
         // buffer = new Buffer(artist.photo, 'base64');
         // filename = 'photo-' + artist.id + '.jpg';
         // fs.writeFileSync(path.join(imagesFolder, filename), buffer);
@@ -146,15 +184,15 @@ class Htf {
     //   promises.push(promise);
       }
 
-      artist = applyArtistFix(artist);
+      artist = applyArtistFix(artist, fixes);
 
       if (!artist.bio || (!artist.bio.fr && !artist.bio.en)) {
         console.warn(`Artist ${artist.name} does not have a bio! | ${artist.id}`);
       }
 
-      if (artist.website) {
-        console.log(`Artist ${artist.name} has website`);
-      }
+      // if (artist.website) {
+      //   console.log(`Artist ${artist.name} has website`);
+      // }
 
       if (!artist.photo) {
         console.warn(`Artist ${artist.name} does not have a photo! | ${artist.id}`);
@@ -179,23 +217,28 @@ class Htf {
         console.warn(`Duplicate artist info ${artist.name} | ${artist.id} -> ${duplicateInfos.id}`);
       }
 
-      if (!skip) {
-        artists.push(artist);
-      }
+      const stage = a.stage - 1;
+      if (!scenes[stage]) {
+        console.warn(`No scene defined at index ${stage}`);
+      } else {
+        if (!skip) {
+          artists.push(artist);
+        }
 
-      var set = {
-        type: a.type,
-        start: a.start,
-        end: a.end,
-        artistId: duplicate ? duplicates[artist.name].id : artist.id
-      };
-      scenes[a.stage - 1].sets.push(set);
+        const set = {
+          type: a.type,
+          start: a.start,
+          end: a.end,
+          artistId: duplicate ? duplicates[artist.name].id : artist.id
+        };
+        scenes[stage].sets.push(set);
+      }
     });
 
     artists = _.sortBy(artists, ['name']);
 
     scenes.forEach(scene => {
-      scene = applyLineupFix(scene);
+      scene = applyLineupFix(scene, fixes);
       scene.sets = _.sortBy(scene.sets, ['start']);
     });
 
@@ -285,28 +328,24 @@ function cleanUrl(url) {
   return url;
 }
 
-function fixBio(bio) {
-  if (!bio) {
-    return null;
-  }
-
-  return bio
-    .replace(/\r\n/g, '<br>')
-    .replace(/\t/g, '')
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/�\?\?/g, '\'');
-}
-
 function fixUnicode(str) {
   if (!str) {
     return;
   }
 
   // Fix bad DB encoding (utf8 encoded as latin1)
-  str = iconvlite.encode(str, 'latin1');
+  str = iconvlite.encode(str, 'windows-1252');
   str = iconvlite.decode(str, 'utf8');
 
+  str = str
+    .replace(/\r\n/g, '<br>')
+    .replace(/\t/g, '');
+    // .replace(/&amp;/g, '&')
+    // .replace(/&quot;/g, '"')
+    // .replace(/�\?\?/g, '\'')
+    // .replace(/��"/g, '\'');
+
+  str = entities.decode(str);
   return str;
 }
 
@@ -315,17 +354,15 @@ function fixName(name) {
     .replace('Dj', 'DJ');
 }
 
-function applyArtistFix(artist) {
+function applyArtistFix(artist, fixes) {
   var fix = _.find(fixes.artists, {id: artist.id});
-
   if (fix) {
     _.assign(artist, fix);
   }
-
   return artist;
 }
 
-function applyLineupFix(lineup) {
+function applyLineupFix(lineup, fixes) {
   var fix = _.find(fixes.lineup, {name: lineup.name});
 
   if (fix) {
@@ -339,4 +376,18 @@ function capitalize(str) {
   return str.replace(/\b\w/g, function (l) {
     return l.toUpperCase();
   });
+}
+
+function getImage(url, filename) {
+  return popsicle.get({
+      url,
+      transport: popsicle.createTransport({type: 'buffer'})
+    })
+    .then(response => {
+      if (response.status >= 200 && response.status < 400 && response.url.indexOf('/404.htm') === -1) {
+        return fs.writeFile(filename, response.body);
+      } else {
+        throw new Error(`Image not found: ${url}`);
+      }
+    });
 }
