@@ -6,7 +6,6 @@ const path = require('path');
 const fs = require('fs-extra');
 const franc = require('franc');
 const _ = require('lodash');
-
 const pkg = require('./package.json');
 const findCountryCode = require('./lib/country');
 const preprocess = require('./lib/preprocess');
@@ -163,64 +162,30 @@ class Htf {
       }
 
       if (!skip) {
-        if (a.photo) {
-          if (!options['skip-images']) {
-            promise = Image.getPhoto(artist, a.photo, imagesFolder)
-              .then(photoName => {
-                if (photoName) {
-                  numPhotos++;
-                  artist.photo = imagesPrefix + photoName;
-                  }
-              });
-            promises.push(promise);
-          }
+        if (a.photo && !options['skip-images']) {
+          promise = Image.getPhoto(artist, a.photo, imagesFolder)
+            .then(photoName => {
+              if (photoName) {
+                numPhotos++;
+                artist.photo = imagesPrefix + photoName;
+              }
+            });
+          promises.push(promise);
+          // // Decode Base64
           // buffer = new Buffer(artist.photo, 'base64');
           // filename = 'photo-' + artist.id + '.jpg';
           // fs.writeFileSync(path.join(imagesFolder, filename), buffer);
-          // numPhotos++;
-          // artist.photo = imagesPrefix + filename;
-      // } else if (artist.facebook) {
-      //   promise = getFacebookUserId(artist.facebook)
-      //     .then(function(id) {
-      //       return getFacebookPhoto(id);
-      //     })
-      //     .then(function(data) {
-      //       console.log('Got ' + artist.name + '\'s photo from facebook');
-      //       // var buffer = new Buffer(data, 'binary');
-      //       var filename = 'photo-' + artist.id + '.jpg';
-      //       fs.writeFileSync(path.join(imagesFolder, filename), data, 'binary');
-      //       numPhotos++;
-      //       artist.photo = imagesPrefix + filename;
-      //     })
-      //     .catch(function(err) {
-      //       console.warn('Error, cannot get artist ' + artist.name + ' photo from facebook!');
-      //       // console.warn('Error details: ' + err);
-      //     })
-      //   promises.push(promise);
         }
 
-        if (a.banner) {
-          // buffer = new Buffer(artist.banner, 'base64');
-          // filename = 'banner-' + artist.id + '.jpg';
-          // fs.writeFileSync(path.join(imagesFolder, filename), buffer);
-          // numBanners++;
-          // artist.banner = imagesPrefix + filename;
-      // } else if (artist.facebook) {
-      //   promise = getFacebookUserId(artist.facebook)
-      //     .then(function(id) {
-      //       return getFacebookCover(id);
-      //     })
-      //     .then(function(data) {
-      //       console.log('Got ' + artist.name + '\'s cover from facebook');
-      //       var filename = 'banner-' + artist.id + '.jpg';
-      //       fs.writeFileSync(path.join(imagesFolder, filename), data, 'binary');
-      //       numBanners++;
-      //       artist.banner = imagesPrefix + filename;
-      //     })
-      //     .catch(function(err) {
-      //       console.warn('Error, cannot get artist ' + artist.name + ' cover from facebook!');
-      //     })
-      //   promises.push(promise);
+        if (artist.facebook && !options['skip-images']) {
+          promise = Image.getBanner(artist, a.photo, imagesFolder)
+            .then(bannerName => {
+              if (bannerName) {
+                numBanners++;
+                artist.banner = imagesPrefix + bannerName;
+              }
+            });
+          promises.push(promise);
         }
 
         artists.push(artist);
