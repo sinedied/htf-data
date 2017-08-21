@@ -258,7 +258,7 @@ class Htf {
         _.each(scene.sets, set => {
           if (set.artistId === artist.id) {
             sets.push(set);
-          };
+          }
         });
       });
       if (!sets.length) {
