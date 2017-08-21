@@ -42,7 +42,7 @@ class Htf {
       },
       default: {
         out: 'dist',
-        fixes: 'fixes.json'
+        fixes: 'fixes'
       }
     });
   }
@@ -74,7 +74,7 @@ class Htf {
   _process(file, options) {
     file = path.resolve(file);
     const out = path.resolve(options.out);
-    const fixesFile = path.resolve(options.fixes);
+    const fixesFile = path.resolve(path.join(options.fixes, 'fixes.json'));
     const imagesFolder = path.join(out, artistImagesFolder);
     fs.ensureDirSync(imagesFolder);
 
@@ -100,18 +100,27 @@ class Htf {
     let fixes = {};
     if (fs.existsSync(fixesFile)) {
       fixes = require(fixesFile);
+    } else {
+      console.warn('No fixes found!')
     }
 
     const promises = [];
     const duplicates = {};
     let numPhotos = 0;
     let numBanners = 0;
+    let numDuplicates = 0;
 
     console.log(`Loaded ${json.length} artists`);
 
     json.forEach(a => {
       let artist = {};
       let promise;
+
+      const stage = a.stage - 1;
+      if (!scenes[stage]) {
+        this._warn(`No scene defined at index ${stage}`);
+        return;
+      }
 
       // Fix encoding
       a.name = Fix.text(a.name);
@@ -135,113 +144,95 @@ class Htf {
       artist.soundcloud = Fix.url(a.soundcloud, 'soundcloud.com');
       artist.facebook = Fix.url(a.facebook, 'facebook.com');
 
-      if (a.photo) {
-        if (!options['skip-images']) {
-          promise = Image.getPhoto(artist, a.photo, imagesFolder)
-            .then(photoName => {
-              numPhotos++;
-              artist.photo = imagesPrefix + photoName;
-            });
-          promises.push(promise);
-        }
-        // buffer = new Buffer(artist.photo, 'base64');
-        // filename = 'photo-' + artist.id + '.jpg';
-        // fs.writeFileSync(path.join(imagesFolder, filename), buffer);
-        // numPhotos++;
-        // artist.photo = imagesPrefix + filename;
-    // } else if (artist.facebook) {
-    //   promise = getFacebookUserId(artist.facebook)
-    //     .then(function(id) {
-    //       return getFacebookPhoto(id);
-    //     })
-    //     .then(function(data) {
-    //       console.log('Got ' + artist.name + '\'s photo from facebook');
-    //       // var buffer = new Buffer(data, 'binary');
-    //       var filename = 'photo-' + artist.id + '.jpg';
-    //       fs.writeFileSync(path.join(imagesFolder, filename), data, 'binary');
-    //       numPhotos++;
-    //       artist.photo = imagesPrefix + filename;
-    //     })
-    //     .catch(function(err) {
-    //       console.warn('Error, cannot get artist ' + artist.name + ' photo from facebook!');
-    //       // console.warn('Error details: ' + err);
-    //     })
-    //   promises.push(promise);
-      }
-
-      if (a.banner) {
-        // buffer = new Buffer(artist.banner, 'base64');
-        // filename = 'banner-' + artist.id + '.jpg';
-        // fs.writeFileSync(path.join(imagesFolder, filename), buffer);
-        // numBanners++;
-        // artist.banner = imagesPrefix + filename;
-    // } else if (artist.facebook) {
-    //   promise = getFacebookUserId(artist.facebook)
-    //     .then(function(id) {
-    //       return getFacebookCover(id);
-    //     })
-    //     .then(function(data) {
-    //       console.log('Got ' + artist.name + '\'s cover from facebook');
-    //       var filename = 'banner-' + artist.id + '.jpg';
-    //       fs.writeFileSync(path.join(imagesFolder, filename), data, 'binary');
-    //       numBanners++;
-    //       artist.banner = imagesPrefix + filename;
-    //     })
-    //     .catch(function(err) {
-    //       console.warn('Error, cannot get artist ' + artist.name + ' cover from facebook!');
-    //     })
-    //   promises.push(promise);
-      }
-
       artist = Fix.artist(artist, fixes);
-
-      if (!artist.bio || (!artist.bio.fr && !artist.bio.en)) {
-        console.warn(`Artist ${artist.name} does not have a bio! | ${artist.id}`);
-      }
-
-      // if (artist.website) {
-      //   console.log(`Artist ${artist.name} has website`);
-      // }
-
-      if (!artist.photo) {
-        console.warn(`Artist ${artist.name} does not have a photo! | ${artist.id}`);
-      }
-
-      if (!artist.banner) {
-        console.warn(`Artist ${artist.name} does not have a banner! | ${artist.id}`);
-      }
 
       let duplicate = _.find(artists, { name: artist.name });
       let skip = false;
 
       if (duplicate) {
-        console.warn(`Duplicate artist ${artist.name} | ${artist.id}, ${duplicate.id}`);
+        this._warn(`Duplicate artist ${artist.name} | ${artist.id}, ${duplicate.id}`);
         duplicates[artist.name] = duplicate;
         skip = true;
-        console.log(`Fixed duplicate artist ${artist.name} | ${artist.id}, ${duplicate.id}`);
+        this._warn(`Fixed duplicate artist ${artist.name} | ${artist.id}, ${duplicate.id}`);
+        numDuplicates++;
       }
 
       var duplicateInfos = _.find(artists, { facebook: artist.facebook });
-      if (!duplicate && duplicateInfos) {
-        console.warn(`Duplicate artist info ${artist.name} | ${artist.id} -> ${duplicateInfos.id}`);
+      if (artist.facebook && !duplicate && duplicateInfos) {
+        this._warn(`Duplicate artist facebook ${artist.name} [previous: ${duplicateInfos.name}] | ${artist.id} -> ${duplicateInfos.id}`);
       }
 
-      const stage = a.stage - 1;
-      if (!scenes[stage]) {
-        console.warn(`No scene defined at index ${stage}`);
-      } else {
-        if (!skip) {
-          artists.push(artist);
+      if (!skip) {
+        if (a.photo) {
+          if (!options['skip-images']) {
+            promise = Image.getPhoto(artist, a.photo, imagesFolder)
+              .then(photoName => {
+                if (photoName) {
+                  numPhotos++;
+                  artist.photo = imagesPrefix + photoName;
+                  }
+              });
+            promises.push(promise);
+          }
+          // buffer = new Buffer(artist.photo, 'base64');
+          // filename = 'photo-' + artist.id + '.jpg';
+          // fs.writeFileSync(path.join(imagesFolder, filename), buffer);
+          // numPhotos++;
+          // artist.photo = imagesPrefix + filename;
+      // } else if (artist.facebook) {
+      //   promise = getFacebookUserId(artist.facebook)
+      //     .then(function(id) {
+      //       return getFacebookPhoto(id);
+      //     })
+      //     .then(function(data) {
+      //       console.log('Got ' + artist.name + '\'s photo from facebook');
+      //       // var buffer = new Buffer(data, 'binary');
+      //       var filename = 'photo-' + artist.id + '.jpg';
+      //       fs.writeFileSync(path.join(imagesFolder, filename), data, 'binary');
+      //       numPhotos++;
+      //       artist.photo = imagesPrefix + filename;
+      //     })
+      //     .catch(function(err) {
+      //       console.warn('Error, cannot get artist ' + artist.name + ' photo from facebook!');
+      //       // console.warn('Error details: ' + err);
+      //     })
+      //   promises.push(promise);
         }
 
-        const set = {
-          type: a.type,
-          start: a.start,
-          end: a.end,
-          artistId: duplicate ? duplicates[artist.name].id : artist.id
-        };
-        scenes[stage].sets.push(set);
+        if (a.banner) {
+          // buffer = new Buffer(artist.banner, 'base64');
+          // filename = 'banner-' + artist.id + '.jpg';
+          // fs.writeFileSync(path.join(imagesFolder, filename), buffer);
+          // numBanners++;
+          // artist.banner = imagesPrefix + filename;
+      // } else if (artist.facebook) {
+      //   promise = getFacebookUserId(artist.facebook)
+      //     .then(function(id) {
+      //       return getFacebookCover(id);
+      //     })
+      //     .then(function(data) {
+      //       console.log('Got ' + artist.name + '\'s cover from facebook');
+      //       var filename = 'banner-' + artist.id + '.jpg';
+      //       fs.writeFileSync(path.join(imagesFolder, filename), data, 'binary');
+      //       numBanners++;
+      //       artist.banner = imagesPrefix + filename;
+      //     })
+      //     .catch(function(err) {
+      //       console.warn('Error, cannot get artist ' + artist.name + ' cover from facebook!');
+      //     })
+      //   promises.push(promise);
+        }
+
+        artists.push(artist);
       }
+
+      const set = {
+        type: a.type,
+        start: a.start,
+        end: a.end,
+        artistId: duplicate ? duplicates[artist.name].id : artist.id
+      };
+      scenes[stage].sets.push(set);
     });
 
     artists = _.sortBy(artists, ['name']);
@@ -279,10 +270,26 @@ class Htf {
 
     var newJson = {lineup: scenes, artists: artists};
 
-    Promise.all(promises).then(function() {
+    Promise.all(promises).then(() => {
+      // Checks
+      _.each(artists, artist => {
+        if (!artist.bio || (!artist.bio.fr && !artist.bio.en)) {
+          this._warn(`Artist ${artist.name} does not have a bio! | ${artist.id}`);
+        }
+
+        if (!artist.photo) {
+          this._warn(`Artist ${artist.name} does not have a photo! | ${artist.id}`);
+        }
+
+        if (!artist.banner) {
+          this._warn(`Artist ${artist.name} does not have a banner! | ${artist.id}`);
+        }
+      });
+
       fs.writeFileSync(path.join(out, 'data.json'), JSON.stringify(newJson, null, 2));
 
-      console.log(`Extracted: ${numPhotos} photos, ${numBanners} banners`);
+      console.log(`Exported artists: ${artists.length} (duplicates fixed: ${numDuplicates})`);
+      console.log(`Images: ${numPhotos} photos, ${numBanners} banners`);
 
       // if (baseJson) {
       //   _.assign(baseJson, newJson);
@@ -295,6 +302,12 @@ class Htf {
   _exit(error, code = 1) {
     console.error(error);
     process.exit(code);
+  }
+
+  _warn(str) {
+    if (this._args.verbose) {
+      console.warn(str);
+    }
   }
 }
 
