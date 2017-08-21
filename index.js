@@ -24,7 +24,7 @@ ${chalk.bold('Options:')}
   -p, --preprocess         Preprocess database extract (removes extra data)
   -s, --skip-images        Do not attempt to download photos/banners
   -o, --out <folder>       Data output folder [default: dist]
-  -f, --fixes <file.json>  Data fixes         [default: fixes.json]
+  -f, --fixes <folder>     Data fixes         [default: fixes]
 `;
 
 class Htf {
@@ -193,7 +193,7 @@ class Htf {
     //   promises.push(promise);
       }
 
-      artist = applyArtistFix(artist, fixes);
+      artist = Fix.artist(artist, fixes);
 
       if (!artist.bio || (!artist.bio.fr && !artist.bio.en)) {
         console.warn(`Artist ${artist.name} does not have a bio! | ${artist.id}`);
@@ -247,7 +247,7 @@ class Htf {
     artists = _.sortBy(artists, ['name']);
 
     scenes.forEach(scene => {
-      scene = applyLineupFix(scene, fixes);
+      scene = Fix.lineup(scene, fixes);
       scene.sets = _.sortBy(scene.sets, ['start']);
     });
 
@@ -299,25 +299,3 @@ class Htf {
 }
 
 module.exports = Htf;
-
-// Internal
-// ------------------------------------
-
-function applyArtistFix(artist, fixes) {
-  var fix = _.find(fixes.artists, {id: artist.id});
-  if (fix) {
-    _.assign(artist, fix);
-  }
-  return artist;
-}
-
-function applyLineupFix(lineup, fixes) {
-  var fix = _.find(fixes.lineup, {name: lineup.name});
-
-  if (fix) {
-    _.assign(lineup, fix);
-  }
-
-  return lineup;
-}
-
