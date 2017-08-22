@@ -13,6 +13,7 @@ const Fix = require('./lib/fix');
 const Image = require('./lib/image');
 const Lineup = require('./lib/lineup');
 const Infos = require('./lib/infos');
+const Featured = require('./lib/featured');
 
 const artistImagesFolder = 'images/artists';
 const festivalStart = '2017-09-09T00:00:00.000Z';
@@ -43,6 +44,7 @@ ${chalk.bold('Options:')}
   -p, --preprocess         Preprocess database extract (removes extra data)
   -s, --skip-images        Do not attempt to download photos/banners
   -l, --lineup <file>      Lineup info        [default: lineup.txt]
+  -e, --featured <file>    Featured artists   [default: featured.txt]
   -f, --fixes <folder>     Data fixes         [default: fixes]
   -i, --infos <folder>     Additional infos   [default: infos]
   -o, --out <folder>       Data output folder [default: dist]
@@ -52,7 +54,7 @@ class Htf {
   constructor(args) {
     this._args = minimist(args, {
       boolean: ['help', 'version', 'verbose', 'preprocess', 'skip-images'],
-      string: ['out', 'fixes', 'lineup', 'update', 'infos'],
+      string: ['out', 'fixes', 'lineup', 'update', 'infos', 'featured'],
       alias: {
         v: 'verbose',
         h: 'help',
@@ -62,13 +64,15 @@ class Htf {
         s: 'skip-images',
         l: 'lineup',
         u: 'update',
-        i: 'infos'
+        i: 'infos',
+        e: 'featured'
       },
       default: {
         out: 'dist',
         fixes: 'fixes',
+        infos: 'infos',
         lineup: 'lineup.txt',
-        infos: 'infos'
+        featured: 'featured.txt'
       }
     });
   }
@@ -102,6 +106,7 @@ class Htf {
     const out = path.resolve(options.out);
     const fixesFile = path.join(path.dirname(file), options.fixes, 'fixes.json');
     const lineupFile = path.join(path.dirname(file), options.lineup);
+    const featuredFile = path.join(path.dirname(file), options.featured);
     const imagesFolder = path.join(out, artistImagesFolder);
     const infosFolder = path.join(path.dirname(file), options.infos);
     fs.ensureDirSync(imagesFolder);
@@ -117,6 +122,12 @@ class Htf {
     let lineup = null;
     if (fs.existsSync(lineupFile)) {
       lineup = fs.readFileSync(lineupFile, 'utf8');
+    } else {
+      console.warn('No lineup found!')
+    }
+    let featured = null;
+    if (fs.existsSync(featuredFile)) {
+      featured = fs.readFileSync(featuredFile, 'utf8');
     } else {
       console.warn('No lineup found!')
     }
@@ -214,6 +225,7 @@ class Htf {
       Lineup.import(lineup, newJson, json, festivalStart);
     }
     Infos.import(infosFolder, newJson, out);
+    Featured.import(featured, newJson);
 
     scenes.forEach(scene => {
       scene = Fix.lineup(scene, fixes);
