@@ -1,4 +1,4 @@
-## Par la route
+### Par la route
 
 <iframe ng-if="!offline" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d351543.88641214976!2d2.5947436516267013!3d46.49946713979648!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47f095bc5f3b0617%3A0xfe9754c6cb777592!2s03430+Vieure!5e0!3m2!1sfr!2sfr!4v1466720428320"
         width="100%" height="300" frameborder="0" style="border:0">
@@ -36,7 +36,7 @@
 *   **Bruxelles** ­ Vieure : 615 km, 6h09 estimées.
 *   **Barcelone** ­ Vieure : 716 km, 7h02 estimées.
 
-## Co-voiturage
+### Co-voiturage
 
 **L'impact environnemental le plus important lors de notre événement concerne celui des transports, qui représente la majeure part d'émissions de gaz à effet de serre produites.**
 
@@ -50,7 +50,7 @@ Ainsi qu'un groupe facebook dédié au co-voiturage:
 
 <button class="button button-calm button-outline button-social button-small icon-left ion-social-facebook" ng-click="vm.open('https://www.facebook.com/groups/108859486206264/')">Groupe Facebook</button>
 
-## En train
+### En train
 
 #### Gares les plus proches
 
@@ -60,7 +60,7 @@ Ainsi qu'un groupe facebook dédié au co-voiturage:
 
 <button class="button button-calm button-outline button-small" ng-click="vm.open('http://www.voyages-sncf.com/')">SNCF</button>
 
-## En bus
+### En bus
 
 Pour tous ceux qui souhaitent venir en train au festival, nous mettons en place 4 départs en bus le jeudi après-midi depuis Moulins (40 km).
 Ainsi que 3 retours le dimanche après-midi et un retour le lundi matin pour les retardataires.

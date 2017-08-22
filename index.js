@@ -16,7 +16,7 @@ const Infos = require('./lib/infos');
 const Featured = require('./lib/featured');
 
 const artistImagesFolder = 'images/artists';
-const festivalStart = '2017-09-09T00:00:00.000Z';
+const festivalStart = '2017-09-07T00:00:00.000Z';
 const scenes = [
   {
     name: 'Main',
@@ -233,6 +233,10 @@ class Htf {
       scene = Fix.lineup(scene, fixes);
       scene.sets = _.sortBy(scene.sets, ['start']);
     });
+
+    if (fixes) {
+      fs.copySync(path.join(path.dirname(file), options.fixes, 'images'), path.join(out, 'images'));
+    }
 
     // Check for orphan artists
     _.each(artists, artist => {
