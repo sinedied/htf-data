@@ -12,10 +12,9 @@ const preprocess = require('./lib/preprocess');
 const Fix = require('./lib/fix');
 const Image = require('./lib/image');
 const Lineup = require('./lib/lineup');
+const Infos = require('./lib/infos');
 
-const artistImagesFolder = 'artists';
-const imagesPrefix = 'images/artists/';
-
+const artistImagesFolder = 'images/artists';
 const festivalStart = '2017-09-09T00:00:00.000Z';
 const scenes = [
   {
@@ -40,10 +39,12 @@ const help =
 Process Hadra Trance Festival database export into valid data for the app.
 
 ${chalk.bold('Options:')}
+  -u, --update <file>      Update data in target file
   -p, --preprocess         Preprocess database extract (removes extra data)
   -s, --skip-images        Do not attempt to download photos/banners
-  -l, --lineup <file>      Add lineup info from text file [default: lineup.txt]
+  -l, --lineup <file>      Lineup info        [default: lineup.txt]
   -f, --fixes <folder>     Data fixes         [default: fixes]
+  -i, --infos <folder>     Additional infos   [default: infos]
   -o, --out <folder>       Data output folder [default: dist]
   `;
 
@@ -51,7 +52,7 @@ class Htf {
   constructor(args) {
     this._args = minimist(args, {
       boolean: ['help', 'version', 'verbose', 'preprocess', 'skip-images'],
-      string: ['out', 'fixes', 'lineup'],
+      string: ['out', 'fixes', 'lineup', 'update', 'infos'],
       alias: {
         v: 'verbose',
         h: 'help',
@@ -59,12 +60,15 @@ class Htf {
         f: 'fixes',
         p: 'preprocess',
         s: 'skip-images',
-        l: 'lineup'
+        l: 'lineup',
+        u: 'update',
+        i: 'infos'
       },
       default: {
         out: 'dist',
         fixes: 'fixes',
-        lineup: 'lineup.txt'
+        lineup: 'lineup.txt',
+        infos: 'infos'
       }
     });
   }
@@ -96,9 +100,10 @@ class Htf {
   _process(file, options) {
     file = path.resolve(file);
     const out = path.resolve(options.out);
-    const fixesFile = path.resolve(path.join(path.dirname(file), options.fixes, 'fixes.json'));
-    const lineupFile = path.resolve(path.join(path.dirname(file), options.lineup));
+    const fixesFile = path.join(path.dirname(file), options.fixes, 'fixes.json');
+    const lineupFile = path.join(path.dirname(file), options.lineup);
     const imagesFolder = path.join(out, artistImagesFolder);
+    const infosFolder = path.join(path.dirname(file), options.infos);
     fs.ensureDirSync(imagesFolder);
 
     let artists = [];
@@ -177,7 +182,7 @@ class Htf {
             .then(photoName => {
               if (photoName) {
                 numPhotos++;
-                artist.photo = imagesPrefix + photoName;
+                artist.photo = path.join(artistImagesFolder, photoName);
               }
             });
           promises.push(promise);
@@ -192,7 +197,7 @@ class Htf {
             .then(bannerName => {
               if (bannerName) {
                 numBanners++;
-                artist.banner = imagesPrefix + bannerName;
+                artist.banner = path.join(artistImagesFolder, bannerName);
               }
             });
           promises.push(promise);
@@ -208,6 +213,7 @@ class Htf {
     if (lineup) {
       Lineup.import(lineup, newJson, json, festivalStart);
     }
+    Infos.import(infosFolder, newJson, out);
 
     scenes.forEach(scene => {
       scene = Fix.lineup(scene, fixes);
