@@ -1,0 +1,26 @@
+[
+  {
+    "title": "Comment venir",
+    "content": "comment-venir.md"
+  },
+  {
+    "title": "Camping & parking",
+    "content": "camping.md"
+  },
+  {
+    "title": "F.A.Q.",
+    "content": "faq.md"
+  },
+  {
+    "title": "Chiens interdits",
+    "content": "chiens.md"
+  },
+  {
+    "title": "Partenaires",
+    "content": "partenaires.md"
+  },
+  {
+    "title": "Contact",
+    "content": "contact.md"
+  }
+]
