@@ -41,20 +41,21 @@ Process Hadra Trance Festival database export into valid data for the app.
 
 ${chalk.bold('Options:')}
   -u, --update <file>      Update data in target file
+  -c, --copy-images <dir>  Copy images to target dir
   -p, --preprocess         Preprocess database extract (removes extra data)
   -s, --skip-images        Do not attempt to download photos/banners
   -l, --lineup <file>      Lineup info        [default: lineup.txt]
   -e, --featured <file>    Featured artists   [default: featured.txt]
-  -f, --fixes <folder>     Data fixes         [default: fixes]
-  -i, --infos <folder>     Additional infos   [default: infos]
-  -o, --out <folder>       Data output folder [default: dist]
+  -f, --fixes <dir>        Data fixes         [default: fixes]
+  -i, --infos <dir>        Additional infos   [default: infos]
+  -o, --out <dir>          Data output dir    [default: dist]
   `;
 
 class Htf {
   constructor(args) {
     this._args = minimist(args, {
       boolean: ['help', 'version', 'verbose', 'preprocess', 'skip-images'],
-      string: ['out', 'fixes', 'lineup', 'update', 'infos', 'featured'],
+      string: ['out', 'fixes', 'lineup', 'update', 'infos', 'featured', 'copy-images'],
       alias: {
         v: 'verbose',
         h: 'help',
@@ -64,6 +65,7 @@ class Htf {
         s: 'skip-images',
         l: 'lineup',
         u: 'update',
+        c: 'copy-images',
         i: 'infos',
         e: 'featured'
       },
@@ -279,11 +281,20 @@ class Htf {
       console.log(`Exported artists: ${artists.length} (duplicates fixed: ${numDuplicates})`);
       console.log(`Images: ${numPhotos} photos, ${numBanners} banners`);
 
-      // if (baseJson) {
-      //   _.assign(baseJson, newJson);
-      //   fs.writeFileSync(baseJsonPath, JSON.stringify(baseJson, null, 2));
-      //   console.log(`Updated ${baseJsonPath}`);
-      // }
+      if (options.update) {
+        const updateFile = path.resolve(options.update);
+        if (!fs.existsSync(updateFile)) {
+          throw new Error(`Cannot find file to update: ${updateFile}`);
+        }
+        const updateJson = require(updateFile);
+        _.assign(updateJson, newJson);
+        fs.writeFileSync(updateFile, JSON.stringify(updateJson, null, 2));
+        console.log(`Updated ${updateFile} sucessfully`);
+      }
+
+      if (options['copy-images']) {
+        fs.copySync(path.join(out, 'images'), path.join(path.resolve(options['copy-images']), 'images'));
+      }
     });
   }
 
