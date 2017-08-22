@@ -11,9 +11,29 @@ const findCountryCode = require('./lib/country');
 const preprocess = require('./lib/preprocess');
 const Fix = require('./lib/fix');
 const Image = require('./lib/image');
+const Lineup = require('./lib/lineup');
 
 const artistImagesFolder = 'artists';
 const imagesPrefix = 'images/artists/';
+
+const festivalStart = '2017-09-09T00:00:00.000Z';
+const scenes = [
+  {
+    name: 'Main',
+    hide: false,
+    sets: []
+  },
+  {
+    name: 'Alternative',
+    hide: false,
+    sets: []
+  },
+  {
+    name: 'Chill',
+    hide: false,
+    sets: []
+  }
+];
 
 const help =
 `${chalk.bold('Usage:')} htf <db_export.json> [options]
@@ -22,26 +42,29 @@ Process Hadra Trance Festival database export into valid data for the app.
 ${chalk.bold('Options:')}
   -p, --preprocess         Preprocess database extract (removes extra data)
   -s, --skip-images        Do not attempt to download photos/banners
-  -o, --out <folder>       Data output folder [default: dist]
+  -l, --lineup <file>      Add lineup info from text file [default: lineup.txt]
   -f, --fixes <folder>     Data fixes         [default: fixes]
-`;
+  -o, --out <folder>       Data output folder [default: dist]
+  `;
 
 class Htf {
   constructor(args) {
     this._args = minimist(args, {
       boolean: ['help', 'version', 'verbose', 'preprocess', 'skip-images'],
-      string: ['out', 'fixes'],
+      string: ['out', 'fixes', 'lineup'],
       alias: {
         v: 'verbose',
         h: 'help',
         o: 'out',
         f: 'fixes',
         p: 'preprocess',
-        s: 'skip-images'
+        s: 'skip-images',
+        l: 'lineup'
       },
       default: {
         out: 'dist',
-        fixes: 'fixes'
+        fixes: 'fixes',
+        lineup: 'lineup.txt'
       }
     });
   }
@@ -73,27 +96,11 @@ class Htf {
   _process(file, options) {
     file = path.resolve(file);
     const out = path.resolve(options.out);
-    const fixesFile = path.resolve(path.join(options.fixes, 'fixes.json'));
+    const fixesFile = path.resolve(path.join(path.dirname(file), options.fixes, 'fixes.json'));
+    const lineupFile = path.resolve(path.join(path.dirname(file), options.lineup));
     const imagesFolder = path.join(out, artistImagesFolder);
     fs.ensureDirSync(imagesFolder);
 
-    const scenes = [
-      {
-        name: "Main",
-        hide: false,
-        sets: []
-      },
-      {
-        name: "Alternative",
-        hide: false,
-        sets: []
-      },
-      {
-        name: "Chillout",
-        hide: false,
-        sets: []
-      }
-    ];
     let artists = [];
     const json = require(file);
     let fixes = {};
@@ -101,6 +108,12 @@ class Htf {
       fixes = require(fixesFile);
     } else {
       console.warn('No fixes found!')
+    }
+    let lineup = null;
+    if (fs.existsSync(lineupFile)) {
+      lineup = fs.readFileSync(lineupFile, 'utf8');
+    } else {
+      console.warn('No lineup found!')
     }
 
     const promises = [];
@@ -113,8 +126,6 @@ class Htf {
 
     json.forEach(a => {
       let artist = {};
-      let promise;
-
       const stage = a.stage - 1;
       if (!scenes[stage]) {
         this._warn(`No scene defined at index ${stage}`);
@@ -142,10 +153,9 @@ class Htf {
       artist.mixcloud = Fix.url(a.mixcloud, 'mixcloud.com');
       artist.soundcloud = Fix.url(a.soundcloud, 'soundcloud.com');
       artist.facebook = Fix.url(a.facebook, 'facebook.com');
-
       artist = Fix.artist(artist, fixes);
 
-      let duplicate = _.find(artists, { name: artist.name });
+      let duplicate = _.find(artists, {name: artist.name});
       let skip = false;
 
       if (duplicate) {
@@ -156,14 +166,14 @@ class Htf {
         numDuplicates++;
       }
 
-      var duplicateInfos = _.find(artists, { facebook: artist.facebook });
+      var duplicateInfos = _.find(artists, {facebook: artist.facebook});
       if (artist.facebook && !duplicate && duplicateInfos) {
         this._warn(`Duplicate artist facebook ${artist.name} [previous: ${duplicateInfos.name}] | ${artist.id} -> ${duplicateInfos.id}`);
       }
 
       if (!skip) {
         if (a.photo && !options['skip-images']) {
-          promise = Image.getPhoto(artist, a.photo, imagesFolder)
+          let promise = Image.getPhoto(artist, a.photo, imagesFolder)
             .then(photoName => {
               if (photoName) {
                 numPhotos++;
@@ -178,7 +188,7 @@ class Htf {
         }
 
         if (artist.facebook && !options['skip-images']) {
-          promise = Image.getBanner(artist, a.photo, imagesFolder)
+          let promise = Image.getBanner(artist, a.photo, imagesFolder)
             .then(bannerName => {
               if (bannerName) {
                 numBanners++;
@@ -190,17 +200,14 @@ class Htf {
 
         artists.push(artist);
       }
-
-      const set = {
-        type: a.type,
-        start: a.start,
-        end: a.end,
-        artistId: duplicate ? duplicates[artist.name].id : artist.id
-      };
-      scenes[stage].sets.push(set);
     });
 
     artists = _.sortBy(artists, ['name']);
+    const newJson = {lineup: scenes, artists: artists};
+
+    if (lineup) {
+      Lineup.import(lineup, newJson, json, festivalStart);
+    }
 
     scenes.forEach(scene => {
       scene = Fix.lineup(scene, fixes);
@@ -209,7 +216,7 @@ class Htf {
 
     // Check for orphan artists
     _.each(artists, artist => {
-      var sets = [];
+      const sets = [];
       _.each(scenes, scene => {
         _.each(scene.sets, set => {
           if (set.artistId === artist.id) {
@@ -232,8 +239,6 @@ class Htf {
         previous = set;
       });
     });
-
-    var newJson = {lineup: scenes, artists: artists};
 
     Promise.all(promises).then(() => {
       // Checks
