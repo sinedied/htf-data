@@ -5,7 +5,7 @@
 4. Faire une liste des artistes à ne pas manquer
 5. Penser à prendre de l’argent liquide (tous les stands ne sont pas équipés de machine à CB)
 6. Prendre soin de l’environnement
-7. Prévoir son maillot de bain ou son bikini ^^ Baignade autorisée de 9h à 21h 
+7. Baignade interdite (à cause de la présence de bactéries dangeureuses poour la santé)
 8. Penser à bien s’hydrater et s’alimenter, c’est important !
 9. Prendre le temps de se reposer et d’aller faire un tour au village Hadra
 10. Prendre soin de soi et des autres
@@ -49,10 +49,9 @@ Les parkings sont situés à quelques centaines de mètres de l’entrée du fes
 ### Faut-il prévoir des vêtements chauds ?
 Le festival ayant lieu en septembre et en plein air, les nuits peuvent être fraiches. Il est vivement conseillé de prévoir quelques vêtements chauds pour la nuit. Ainsi qu'une tente et un bon sac de couchage pour ceux qui souhaitent se reposer confortablement.
 
-Bien qu'habituellement de courte durée, **un orage est toujours possible à cette saison.** Nous y sommes préparé. Soyez­le aussi.
+Bien qu'habituellement de courte durée, **un orage est toujours possible à cette saison.** Nous y sommes préparé, soyez-le aussi.
 
-Par ailleurs, les journées peuvent être chaudes et très ensolleillées. N'oubliez pas de prendre de la crème solaire, un chapeau et votre maillot de bain.
-**La baignade sera autorisée de 9h à 21h.** 
+Par ailleurs, les journées peuvent être chaudes et très ensolleillées. N'oubliez pas de prendre de la crème solaire et un chapeau.
 
 ### Puis-je venir avec mon chien ?
 **NON.**
