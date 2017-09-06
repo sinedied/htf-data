@@ -1,3 +1,6 @@
+Le festival se déroulera à Vieure, dans le département de l’Allier, au Nord de l’Auvergne.
+Le site du festival se trouve au bord du **Plan d’eau de Vieure**.
+
 ### Par la route
 
 <iframe ng-if="!offline" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d351543.88641214976!2d2.5947436516267013!3d46.49946713979648!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47f095bc5f3b0617%3A0xfe9754c6cb777592!2s03430+Vieure!5e0!3m2!1sfr!2sfr!4v1466720428320"
