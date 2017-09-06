@@ -66,5 +66,8 @@ Aucun remboursement ne sera envisageable.
 Il est indispensable de passer d'abord par la billetterie pour y valider sa prévente et se voir remettre son bracelet (celui­ci permettant ensuite d'entrer et de sortir librement du festival pendant toute sa durée). 
 **Toute personne non munie de son bracelet sera refoulée sur la route d'accès au festival et invitée à se présenter à la billetterie.**
 
+### Les tickets sur place sont-ils disponibles ?
+Oui, la billetterie sera ouverte du jeudi au samedi de 12h00 à 04h00 du matin.
+
 ### Pour tout renseignement
 Merci de contacter [hadra@hadra.net](mailto:hadra@hadra.net)
