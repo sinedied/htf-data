@@ -31,7 +31,7 @@ Les festivaliers pourront aussi aller se ravitailler librement dans les commerce
 
 ### A quel heure commence le festival ?
 Le site du festival sera ouvert au public à partir du jeudi 7 septembre à 14h.
-La musique débutera à 18h.
+La musique débutera à 20h.
 
 ### Puis-je venir uniquement la première nuit ?
 Oui... mais il n’existe pas de Pass 1 jour...
@@ -65,10 +65,6 @@ Aucun remboursement ne sera envisageable.
 **NON.**
 Il est indispensable de passer d'abord par la billetterie pour y valider sa prévente et se voir remettre son bracelet (celui­ci permettant ensuite d'entrer et de sortir librement du festival pendant toute sa durée). 
 **Toute personne non munie de son bracelet sera refoulée sur la route d'accès au festival et invitée à se présenter à la billetterie.**
-
-### Les tickets seront-ils disponibles sur place ?
-**NON.**
-Le festival étant complet, il n’y aura **PAS de tickets disponibles sur place.**
 
 ### Pour tout renseignement
 Merci de contacter [hadra@hadra.net](mailto:hadra@hadra.net)
