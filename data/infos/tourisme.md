@@ -98,7 +98,7 @@ La réserve naturelle nationale du val d'Allier est une réserve naturelle natio
 
 **Adresse :** Place des Thermes, 03160 Bourbon-l'Archambault 
 **Position GPS :** 46.585293, 3.056672
-**Téléphone :**  [04 70 67 07 88](javascript:void(0)) 
+**Téléphone :**  04 70 67 07 88
 
 Classés Monument Historique, les thermes de Bourbon-l’Archambault vous accueillent dans un cadre alliant décor exceptionnel et installations de soins modernes, fonctionnelles et perfectionnées.
 
