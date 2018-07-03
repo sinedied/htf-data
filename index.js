@@ -16,7 +16,7 @@ const Infos = require('./lib/infos');
 const Featured = require('./lib/featured');
 
 const artistImagesFolder = 'images/artists';
-const festivalStart = '2017-09-07T00:00:00.000Z';
+const festivalStart = '2018-09-06T00:00:00.000Z';
 const scenes = [
   {
     name: 'Main',
@@ -131,7 +131,7 @@ class Htf {
     if (fs.existsSync(featuredFile)) {
       featured = fs.readFileSync(featuredFile, 'utf8');
     } else {
-      console.warn('No lineup found!')
+      console.warn('No featured artists found!')
     }
 
     const promises = [];
@@ -144,9 +144,9 @@ class Htf {
 
     json.forEach(a => {
       let artist = {};
-      const stage = a.stage - 1;
+      const stage = Fix.stageForArtist(a, fixes) - 1;
       if (!scenes[stage]) {
-        this._warn(`No scene defined at index ${stage}`);
+        this._warn(`No scene defined at index ${stage} [artist: ${a.name}]`);
         return;
       }
 

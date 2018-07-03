@@ -12,10 +12,12 @@ because to transform (bad) semi-structured data into cleaned up, structured data
 - fix mojibake (bad unicode encoding)
 - make extensive use of fuzzy-search to match artists name, nationalities...
 - fetch images, resize and reencode them
-- use Facebook API to retrieve artist photos/banners, an even parse Facebook HTML pages as
-  a workaround to retrived `userId` from pages (not possible with the new API)
+- use Facebook API to retrieve artist photos/banners, and even parse Facebook HTML pages as
+  a workaround to retrieve `userId` from pages (not possible with the new API)
 - parse non-structed text files
 - detect and fix malformed URLs
 
 ...among other things ;-)
+
+Use https://developers.facebook.com/tools/explorer/ for access token.
 

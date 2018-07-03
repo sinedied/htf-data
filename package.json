@@ -12,8 +12,8 @@
     "htf": "./bin/htf"
   },
   "scripts": {
-    "start": "htf data/htf2017_booking_table.json",
-    "update": "htf data/htf2017_booking_table.json -u ../hadra-trance-festival/sources/static/data.json -c ../hadra-trance-festival/sources/",
+    "start": "htf data/htf2018_booking_table.json",
+    "update": "htf data/htf2018_booking_table.json -u ../hadra-trance-festival/sources/static/data.json -c ../hadra-trance-festival/sources/",
     "lint": "eslint *.js lib/*.js",
     "test": "npm run lint",
     "postpublish": "git tag -a $npm_package_version -m '$npm_package_version' && git push --tags"
