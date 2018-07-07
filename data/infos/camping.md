@@ -11,18 +11,15 @@ Un **parking voiture** est également prévu à l’**entrée du site** du festi
 
 ______________________
 
-**Nous sommes heureux de pouvoir vous présenter les Bell Tents sur le camping du Hadra Trance Festival.**
+Après le succès rencontré en 2017 par les **Tipi Bell Tents** de "**Typique**" sur la 10ème édition du festival, nous avons choisi d'accueillir à nouveau ce partenaire pour vous proposer une autre vision du camping en festival. 
 
-Pas besoin d'amener votre tente ni de la ramballer après le festival.
-Arrivez au festival et installez vous avec votre tribu dans une Bell Tent.
+Vous aimez voyager léger mais appréciez un peu de confort en festival, vous voulez partager cet événement en famille ou entre amis sans jamais vous séparer mais n'avez pas de tente assez grande, vous n'avez pas de tente du tout ? Réservez simplement la tente de votre choix auprès de Typique, rejoignez votre tribu au campement Tipi Bell Tents du festival, posez vos valises et allez danser sans attendre !
 
-Les Tipi Bell Tents sont espacieux et peuvent loger entre 4 et 8 personnes. 
+Les Tipi Bell Tents sont spacieuses et peuvent loger entre 4 et 8 personnes selon 2 tailles différentes :
 
-Il y a 2 différentes tailles :
+- Le Tipi 4m, confortable pour 4 personnes (215 euros pour toute la durée du festival)
+- Le Tipi 5m, confortable pour 8 personnes (265 euros pour toute la durée du festival)
 
-- Le Tipi 4m, confortable pour 4 personnes (200 euros pour la durée du festival)
-- Le Tipi 5m, confortable pour 8 personnes (250 euros pour la durée du festival)
-
-Pour reserver envoyez un mail avec votre nom et adresse: [tyipisch@gmail.com](mailto:tyipisch@gmail.com)
+Réservez votre tente auprès de Typique à l'adresse suivante en renseignant le type de tente choisie et vos coordonnées : [typiquehadra@gmail.com](mailto:typiquehadra@gmail.com)
 
 ![bell tents](images/infos/bell-tents.jpg)

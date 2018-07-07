@@ -67,7 +67,8 @@ Il est indispensable de passer d'abord par la billetterie pour y valider sa pré
 **Toute personne non munie de son bracelet sera refoulée sur la route d'accès au festival et invitée à se présenter à la billetterie.**
 
 ### Les tickets sur place sont-ils disponibles ?
-Oui, la billetterie sera ouverte du jeudi au samedi de 12h00 à 04h00 du matin.
+**OUI.**
+Cela dépendra si l'ensemble des places auront été vendues en prévente ou non. Pour être sûr de pouvoir assister au festival, il est recommandé d'acheter sa place en prévente. 
 
 ### Pour tout renseignement
 Merci de contacter [hadra@hadra.net](mailto:hadra@hadra.net)

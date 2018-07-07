@@ -39,19 +39,23 @@ Le site du festival se trouve au bord du **Plan d’eau de Vieure**.
 *   **Bruxelles** ­ Vieure : 615 km, 6h09 estimées.
 *   **Barcelone** ­ Vieure : 716 km, 7h02 estimées.
 
+### En bus
+
+**PACK BUS + PASS AVEC NOTRE PARTENAIRE OFFICIEL ONTOURS**
+
+*Voyage convivial entre passionnés et en toute sécurité directement jusqu’au festival.*
+
+Départs de Grenoble/Lyon et Paris/Orléans
+
+A partir de 69 € (Pass 4 jours non-inclus ) / 174 € (Pass 4 jours inclus)
+
+[![ontours](images/infos/ontours.jpg)](https://www.ontours.fr/hadra-trance-festival-p4140.html?referer=hadra)
+
 ### Co-voiturage
 
 **L'impact environnemental le plus important lors de notre événement concerne celui des transports, qui représente la majeure part d'émissions de gaz à effet de serre produites.**
 
 Soucieux de ces enjeux, nous essayons de développer au maximum l'utilisation de transports en commun et de covoiturage afin de minimiser et diminuer ces émissions. 
-
-Nous vous proposons donc une plateforme de covoiturage:
-
-[![covievent](images/infos/covievent-logo.png)](https://www.covievent.org/covoiturage/hadra-trance-festival-10-1/bd44ecdfc94608e8d7b0398f6358555a)
-
-Ainsi qu'un groupe facebook dédié au co-voiturage:
-
-<button class="button button-calm button-outline button-social button-small icon-left ion-social-facebook" ng-click="vm.open('https://www.facebook.com/groups/108859486206264/')">Groupe Facebook</button>
 
 ### En train
 
@@ -63,9 +67,7 @@ Ainsi qu'un groupe facebook dédié au co-voiturage:
 
 <button class="button button-calm button-outline button-small" ng-click="vm.open('http://www.voyages-sncf.com/')">SNCF</button>
 
-### En bus
+**Attention, il n'y a pas de transport public entre ces villes et le site du festival !**
 
-Pour tous ceux qui souhaitent venir en train au festival, nous mettons en place 4 départs en bus le jeudi après-midi depuis Moulins (40 km).
-Ainsi que 3 retours le dimanche après-midi et un retour le lundi matin pour les retardataires.
-
-<button class="button button-calm button-outline button-small" ng-click="vm.open('http://www.hadra.net/shop/new/category.php?id_category=6')">Voir les bus</button>
+Le stop reste une option. Mais cela peut prendre beaucoup de temps sur les petites routes de l'Allier et ne peut pas être considéré comme 100% sûre. 
+Pour tous ceux qui souhaitent venir en train au festival, nous mettons en place des bus-navette en partance le jeudi après-midi depuis la gare Moulins (40 km) et des retours le dimanche après-midi ainsi que le lundi matin pour les retardataires.
