@@ -15,11 +15,9 @@ Le site du festival se trouve au bord du **Plan d’eau de Vieure**.
 - Rouler en direction de D94 à Vieure
 - Suivre le fléchage
 
-#### De Genève (CH), Turin (It), Chambéry, Clermont­-Ferrand, Marseille, Bordeaux, Toulouse:
-- Suivre direction Clermont Ferrand, une fois Clermont­-Ferrand passé, suivre Bourges et prendre l’A71
+#### De Genève (CH), Turin (It), Chambéry, Clermont­Ferrand, Marseille, Bordeaux, Toulouse:
+- Suivre direction Clermont Ferrand, une fois Clermont­Ferrand passé, suivre Bourges et prendre l’A71
 - Sur l’A71, prendre la sortie 10 en direction de Montluçon/Guéret/Cosne d'Allier/Commentry
-- Sortie 3 depuis le périphérique de Grenoble pour Sassenage (D1532)
-- Aller à Lans­en­Vercors (D531)
 - Suivre le fléchage
 
 #### Distance et durée estimée du trajet depuis les principales grandes villes:
@@ -67,7 +65,54 @@ Soucieux de ces enjeux, nous essayons de développer au maximum l'utilisation de
 
 <button class="button button-calm button-outline button-small" ng-click="vm.open('http://www.voyages-sncf.com/')">SNCF</button>
 
+##### AllonsBonTrain
+
+Ton billet de train au prix du covoiturage, et en réduisant plus encore ton empreinte carbone, c'est possible avec AllonsBonTrain !
+Cette année, pour te rendre au Hadra Trance Festival, retrouve d'autres festivaliers et accédez ensemble aux tarifs de groupe : jusqu’à 60% moins cher que des billets de train individuels.
+
+Viens vite réserver ta place [ici](http://Allonsbontrain.fr/event/hadra2018)!
+
 **Attention, il n'y a pas de transport public entre ces villes et le site du festival !**
 
 Le stop reste une option. Mais cela peut prendre beaucoup de temps sur les petites routes de l'Allier et ne peut pas être considéré comme 100% sûre. 
 Pour tous ceux qui souhaitent venir en train au festival, nous mettons en place des bus-navette en partance le jeudi après-midi depuis la gare Moulins (40 km) et des retours le dimanche après-midi ainsi que le lundi matin pour les retardataires.
+
+**ALLER**
+(Départ Moulins / gare SNCF) 
+
+Jeudi 6 sept. 2018 / 13h30 
+
+Jeudi 6 sept. 2018 / 15h45 
+
+Jeudi 6 sept. 2018 / 18h45 
+
+Jeudi 6 sept. 2018 / 21h45
+
+Vendredi 7 sept. 2018 / 13h30 
+
+Vendredi 7 sept. 2018 / 15h45 
+
+Vendredi 7 sept. 2018 / 19h45 
+
+Vendredi 7 sept. 2018 / 21h45
+
+Samedi 8 sept. 2018 / 18h45
+
+[Aller 8€](http://www.hadra.net/tickets2018/fr/12-preventes)
+
+**RETOUR**
+(Départ billetterie festival / parking)
+
+Dimanche 9 sept. 2018 : 12h00
+
+Dimanche 9 sept. 2018 : 14h 
+
+Dimanche 9 sept. 2018 : 15h30
+
+Dimanche 9 sept. 2018 : 17h30
+
+Lundi 10 sept. 2018 : 9h
+
+Lundi 10 sept. 2018 : 13h
+
+[Retour 8€](http://www.hadra.net/tickets2018/fr/12-preventes?page=2)

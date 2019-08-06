@@ -239,6 +239,7 @@ class Htf {
     }
 
     // Check for orphan artists
+    let toRemove = [];
     _.each(artists, artist => {
       const sets = [];
       _.each(scenes, scene => {
@@ -250,8 +251,10 @@ class Htf {
       });
       if (!sets.length) {
         console.warn(`Warning, artist ${artist.name} has no sets!`);
+        toRemove.push(artist);
       }
     });
+    toRemove.forEach(artist => _.remove(artists, artist));
 
     // Check for holes in lineup
     _.each(scenes, scene => {
