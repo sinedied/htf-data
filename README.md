@@ -19,5 +19,8 @@ because to transform (bad) semi-structured data into cleaned up, structured data
 
 ...among other things ;-)
 
-Use https://developers.facebook.com/tools/explorer/ for access token.
+## How to use
+
+Use https://developers.facebook.com/tools/explorer/ to get an app access token,
+then set the `FB_TOKEN` environment variable with it before running `npm start`.
 

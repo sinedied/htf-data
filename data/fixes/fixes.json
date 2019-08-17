@@ -1,20 +1,4 @@
 {
   "artists": [
-    {
-      "id": "153",
-      "stage": "2",
-      "name": "BUNKELD (BASS BIN)",
-      "nationality": "Greek",
-      "label": "The Bass Bin",
-      "facebook": "https://www.facebook.com/dabassbin/",
-      "photo": "images/artists/photo-153.jpg",
-      "bio": "Keep it tidy! The Bass Bin crew bringing their rubbish vibes with two fully mobile 12V wheelie bin sound systems. They will be wheeling their latest upgrade which is one of the loudest wheelie bin systems in the UK.\r\nThe Bass Bin aims to entertain, inspire and educate about DIY sustainable living possibilities, in a fun and informal way.\r\nIt does exactly what it says on the bin. Not rubbish, rolling micro events in any location."
-    },
-    {
-      "id": "142",
-      "facebook": "https://www.facebook.com/liisbea/",
-      "photo": "images/artists/photo-142.jpg",
-      "banner": "images/artists/banner-142.jpg"
-    }
   ]
 }
